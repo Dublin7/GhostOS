@@ -1,0 +1,12 @@
+.env
+*.env
+.env.*
+*.key
+*.pem
+*secret*
+*password*
+node_modules/
+*.log
+__pycache__/
+storage/
+downloads/
