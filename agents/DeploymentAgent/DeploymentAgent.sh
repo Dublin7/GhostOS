@@ -6,7 +6,7 @@ DEPLOY_DIR="./deployed_ais"
 list_deployed() {
     echo ""
     echo "--- DeploymentAgent: Available AI Manifests ---"
-    
+
     # Check if the deployment directory exists
     if [ ! -d "$DEPLOY_DIR" ]; then
         echo "[DeploymentAgent] WARNING: Deployment directory not found: $DEPLOY_DIR"
@@ -15,7 +15,7 @@ list_deployed() {
 
     # Find and list all manifest files
     local MANIFESTS=$(find "$DEPLOY_DIR" -maxdepth 1 -name "*.manifest" -print 2>/dev/null | sort)
-    
+
     if [ -z "$MANIFESTS" ]; then
         echo "[DeploymentAgent] INFO: No AI manifests found in $DEPLOY_DIR."
     else
@@ -26,6 +26,29 @@ list_deployed() {
         done
     fi
     echo "------------------------------------------------"
+    echo ""
+}
+
+# Function to view the details of a specific manifest file
+view_manifest() {
+    local MANIFEST_NAME="$1"
+    local MANIFEST_FILE="$DEPLOY_DIR/$MANIFEST_NAME"
+
+    if [ -z "$MANIFEST_NAME" ]; then
+        echo "[DeploymentAgent] ERROR: Manifest name is required."
+        return 1
+    fi
+
+    if [ ! -f "$MANIFEST_FILE" ]; then
+        echo "[DeploymentAgent] ERROR: Manifest file not found: $MANIFEST_FILE"
+        return 1
+    fi
+
+    echo ""
+    echo "--- DeploymentAgent: Viewing Manifest: $MANIFEST_NAME ---"
+    # Display the contents of the file
+    cat "$MANIFEST_FILE"
+    echo "---------------------------------------------------"
     echo ""
 }
 
@@ -65,11 +88,14 @@ case "$1" in
     list_deployed)
         list_deployed
         ;;
+    view_manifest)
+        view_manifest "$2"
+        ;;
     deploy_instance)
         deploy_instance "$2"
         ;;
     *)
-        echo "Usage: $0 {list_deployed|deploy_instance <manifest_name>}"
+        echo "Usage: $0 {list_deployed|view_manifest <manifest_name>|deploy_instance <manifest_name>}"
         exit 1
         ;;
 esac
